@@ -1,0 +1,7 @@
+# Build files
+**/*.bundle.js
+index.js
+index.js.map
+
+# Libraries
+node_modules

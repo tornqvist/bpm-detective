@@ -1,0 +1,49 @@
+{
+  "name": "bpm-detective",
+  "version": "1.0.0",
+  "description": "Detects the BPM of a song or audio sample",
+  "main": "index.js",
+  "config": {
+    "port": 3000,
+    "reminder": "\u001b[41m\u001b[37mEnsure that the server is running => \"npm run serve\".\u001b[39m\u001b[49m"
+  },
+  "scripts": {
+    "postinstall": "babel lib/detective.js -o index.js --source-maps --stage 0 --modules umdStrict",
+    "pretest": "echo ${npm_package_config_reminder} && npm run build:test",
+    "test": "open http://localhost:${npm_package_config_port}",
+    "posttest": "npm run lint",
+    "lint": "eslint ./",
+    "serve": "serve ./test -p ${npm_package_config_port}",
+    "watch:test": "nodemon -w lib -w test -i test/*.bundle.js -x 'npm run build:test'",
+    "build:test": "browserify -d -t [babelify --stage 0] -e test/program.js --o test/program.bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tornqvist/bpm-detective.git"
+  },
+  "keywords": [
+    "detect",
+    "audio",
+    "bpm",
+    "sound",
+    "music"
+  ],
+  "author": "Carl Törnqvist <calle.tornqvist@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tornqvist/bpm-detective/issues"
+  },
+  "homepage": "https://github.com/tornqvist/bpm-detective#readme",
+  "devDependencies": {
+    "babel-eslint": "^4.0.7",
+    "babelify": "^6.2.0",
+    "browserify": "^11.0.1",
+    "eslint": "^1.0.0",
+    "nodemon": "^1.4.1",
+    "serve": "^1.4.0",
+    "tape": "^4.0.1"
+  },
+  "dependencies": {
+    "babel": "^5.8.23"
+  }
+}

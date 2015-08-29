@@ -1,0 +1,11 @@
+# Build files
+index.js
+index.js.map
+
+# Tests
+test
+
+# Development files
+.eslintrc
+.eslintignore
+.gitignore
