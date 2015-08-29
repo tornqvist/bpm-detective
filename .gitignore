@@ -5,3 +5,6 @@ index.js.map
 
 # Libraries
 node_modules
+
+# Logs
+npm-debug.log

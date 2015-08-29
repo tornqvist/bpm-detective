@@ -1,6 +1,6 @@
 {
   "name": "bpm-detective",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detects the BPM of a song or audio sample",
   "main": "index.js",
   "config": {
