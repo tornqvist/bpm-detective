@@ -8,7 +8,7 @@
     "reminder": "\u001b[41m\u001b[37mEnsure that the server is running => \"npm run serve\".\u001b[39m\u001b[49m"
   },
   "scripts": {
-    "postinstall": "babel lib/detective.js -o index.js --source-maps --stage 0 --modules umdStrict",
+    "postinstall": "babel lib/detect.js -o index.js --source-maps --stage 0 --modules umdStrict",
     "pretest": "echo ${npm_package_config_reminder} && npm run build:test",
     "test": "open http://localhost:${npm_package_config_port}",
     "posttest": "npm run lint",

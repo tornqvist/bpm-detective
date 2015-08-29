@@ -1,5 +1,5 @@
 import test from 'tape';
-import detect from './../lib/detective';
+import detect from './../lib/detect';
 
 const AudioContext = (window.AudioContext || window.webkitAudioContext);
 
@@ -14,9 +14,9 @@ test('detects bpm', assert => {
     .then((sources) => Promise.all(sources.map(detect)))
     .catch(assert.end)
     // Match detected bpm to expected bpm
-    .then((results) => results.map((bpm, index) => [bpm, beats[index]]))
+    .then(results => results.map((bpm, index) => [bpm, beats[index]]))
     // Map pairs through assert
-    .then((pairs) => pairs.forEach(pair => assert.equal(...pair)));
+    .then(pairs => pairs.forEach(pair => assert.equal(...pair)));
 });
 
 test('fails with short sample', assert => {
