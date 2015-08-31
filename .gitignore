@@ -1,6 +1,5 @@
 # Build files
-index.js
-index.js.map
+index.*
 
 # Libraries
 node_modules

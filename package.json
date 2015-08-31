@@ -4,8 +4,10 @@
   "description": "Detects the BPM of a song or audio sample",
   "main": "index.js",
   "scripts": {
-    "postinstall": "babel lib/detect.js -o index.js --source-maps --stage 0 --modules umdStrict",
+    "postinstall": "npm run build && npm run minify",
     "test": "browserify test/program.js | tape-run -b chrome",
+    "build": "babel lib/detect.js -o index.js --source-maps --stage 0 --modules umdStrict",
+    "minify": "uglifyjs index.js -o index.min.js",
     "posttest": "npm run lint",
     "lint": "eslint ./",
     "convert": "bin/convert"
@@ -36,6 +38,7 @@
     "serve": "^1.4.0",
     "tape": "^4.0.1",
     "tape-run": "^1.1.0",
+    "uglify-js": "^2.4.24",
     "whatwg-fetch": "^0.9.0"
   },
   "dependencies": {
