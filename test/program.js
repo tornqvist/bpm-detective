@@ -10,7 +10,7 @@ const AudioContext = (window.AudioContext || window.webkitAudioContext);
  */
 
 // Needed to circumvent Babel's transformation
-let fs = require('fs');
+const fs = require('fs');
 let fixtures = {
   '90': fs.readFileSync(__dirname + '/fixtures/90bpm.wav', { encoding: 'base64' }),
   '97': fs.readFileSync(__dirname + '/fixtures/97bpm.wav', { encoding: 'base64' }),
