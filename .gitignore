@@ -1,5 +1,7 @@
-# Build files
-index.*
+# Build
+dist
+lib/*
+!lib/index.js
 
 # Libraries
 node_modules

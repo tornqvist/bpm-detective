@@ -1,10 +1,7 @@
-# Build files
-index.*
-
 # Tests
 test
 
 # Development files
-.eslintrc
+.eslintrc.json
 .eslintignore
 .gitignore
