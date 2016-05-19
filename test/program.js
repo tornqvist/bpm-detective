@@ -1,7 +1,5 @@
-import 'babel/polyfill';
-import 'whatwg-fetch';
 import test from 'tape';
-import detect from './../lib/detect';
+import detect from './../src/detect';
 
 const AudioContext = (window.AudioContext || window.webkitAudioContext);
 
@@ -12,33 +10,39 @@ const AudioContext = (window.AudioContext || window.webkitAudioContext);
 // Needed to circumvent Babel's transformation
 const fs = require('fs');
 let fixtures = {
-  '90': fs.readFileSync(__dirname + '/fixtures/90bpm.wav', { encoding: 'base64' }),
-  '97': fs.readFileSync(__dirname + '/fixtures/97bpm.wav', { encoding: 'base64' }),
-  '117': fs.readFileSync(__dirname + '/fixtures/117bpm.wav', { encoding: 'base64' }),
-  '140': fs.readFileSync(__dirname + '/fixtures/140bpm.wav', { encoding: 'base64' }),
-  '170': fs.readFileSync(__dirname + '/fixtures/170bpm.wav', { encoding: 'base64' })
+  '90': fs.readFileSync(__dirname + '/fixtures/90bpm.wav', 'base64'),
+  '97': fs.readFileSync(__dirname + '/fixtures/97bpm.wav', 'base64'),
+  '117': fs.readFileSync(__dirname + '/fixtures/117bpm.wav', 'base64'),
+  '140': fs.readFileSync(__dirname + '/fixtures/140bpm.wav', 'base64'),
+  '170': fs.readFileSync(__dirname + '/fixtures/170bpm.wav', 'base64')
 };
 
-test('detects bpm', assert => {
+test('detects bpm', t => {
   const beats = [97, 117, 140, 170];
 
-  // Load beats
-  Promise.all(beats.map(bpm => convert(fixtures[bpm])))
-    // Detect bpm of all beats
-    .then(sources => Promise.all(sources.map(detect)))
-    // Match detected bpm to expected bpm
-    .then(results => results.map((bpm, index) => [bpm, beats[index]]))
-    // Map pairs through assert
-    .then(pairs => pairs.forEach(pair => assert.equal(...pair)))
-    .then(assert.end, assert.end);
+  Promise.all(
+    beats.map(bpm => convert(fixtures[bpm]))
+  ).then(buffers => {
+    try {
+      for (let [i, buffer] of buffers.entries()) {
+        const bpm = detect(buffer);
+        t.equal(beats[i], bpm, `Detected ${ beats[i] } bpm`);
+      }
+    } catch (err) {
+      t.fail(err);
+    }
+  }).then(t.end, t.end);
 });
 
-test('fails with short sample', assert => {
-  convert(fixtures['90'])
-    .then(detect)
-    .then(bpm => assert.fail(`Detected ${ bpm }`))
-    .catch(err => assert.pass(err.message))
-    .then(assert.end);
+test('fails with short sample', t => {
+  convert(fixtures['90']).then(buffer => {
+    try {
+      const bpm = detect(buffer);
+      t.fail(`Detected ${ bpm }`);
+    } catch (err) {
+      t.pass(err);
+    }
+  }).then(t.end, t.end);
 });
 
 /**
@@ -46,10 +50,10 @@ test('fails with short sample', assert => {
  */
 
 function convert(base64) {
-  let context = new AudioContext();
-  let binaryString = atob(base64);
-  let len = binaryString.length;
-  let bytes = new Uint8Array(len);
+  const context = new AudioContext();
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
 
   for (let i = 0; i < len; i += 1)        {
     bytes[i] = binaryString.charCodeAt(i);

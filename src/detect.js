@@ -7,7 +7,7 @@ const OfflineContext = (window.OfflineAudioContext || window.webkitOfflineAudioC
  */
 
 export default function detect(buffer) {
-  let source = getLowPassSource(buffer);
+  const source = getLowPassSource(buffer);
 
   /**
    * Schedule the sound to start playing at time:0
@@ -19,14 +19,27 @@ export default function detect(buffer) {
    * Pipe the source through the program
    */
 
-  return Promise.all(findPeaks(source.buffer.getChannelData(0)))
-    .then(identifyIntervals)
-    .then(groupByTempo(buffer.sampleRate))
-    .then((groups) => {
-      return groups
-        .sort((a, b) => (b.count - a.count))
-        .splice(0, 5)[0].tempo;
-    });
+  return [
+    findPeaks,
+    identifyIntervals,
+    groupByTempo(buffer.sampleRate),
+    getTopCandidate
+  ].reduce(
+   (state, fn) => fn(state),
+    source.buffer.getChannelData(0)
+  );
+}
+
+/**
+ * Sort results by count and return top candidate
+ * @param  {Object} Candidate
+ * @return {Number}
+ */
+
+function getTopCandidate(candidates) {
+  return candidates
+    .sort((a, b) => (b.count - a.count))
+    .splice(0, 5)[0].tempo;
 }
 
 /**
@@ -36,21 +49,21 @@ export default function detect(buffer) {
  */
 
 function getLowPassSource(buffer) {
-  let {length, numberOfChannels, sampleRate} = buffer;
-  let context = new OfflineContext(numberOfChannels, length, sampleRate);
+  const {length, numberOfChannels, sampleRate} = buffer;
+  const context = new OfflineContext(numberOfChannels, length, sampleRate);
 
   /**
    * Create buffer source
    */
 
-  let source = context.createBufferSource();
+  const source = context.createBufferSource();
   source.buffer = buffer;
 
   /**
    * Create filter
    */
 
-  let filter = context.createBiquadFilter();
+  const filter = context.createBiquadFilter();
   filter.type = 'lowpass';
 
   /**
@@ -72,8 +85,8 @@ function getLowPassSource(buffer) {
 function findPeaks(data) {
     let peaks = [];
     let threshold = 0.9;
-    let minThresold = 0.3;
-    let minPeaks = 15;
+    const minThresold = 0.3;
+    const minPeaks = 15;
 
     /**
      * Keep looking for peaks lowering the threshold until
@@ -90,7 +103,9 @@ function findPeaks(data) {
      */
 
     if (peaks.length < minPeaks) {
-      return [Promise.reject(new Error('Could not find enough samples for a reliable detection.'))];
+      throw (
+        new Error('Could not find enough samples for a reliable detection.')
+      );
     }
 
     return peaks;
@@ -104,7 +119,7 @@ function findPeaks(data) {
  */
 
 function findPeaksAtThreshold(data, threshold) {
-  let peaks = [];
+  const peaks = [];
 
   /**
    * Identify peaks that pass the threshold, adding them to the collection
@@ -132,7 +147,7 @@ function findPeaksAtThreshold(data, threshold) {
  */
 
 function identifyIntervals(peaks) {
-  let intervals = [];
+  const intervals = [];
 
   peaks.forEach((peak, index) => {
     for (let i = 0; i < 10; i+= 1) {
@@ -142,7 +157,7 @@ function identifyIntervals(peaks) {
        * Try and find a matching interval and increase it's count
        */
 
-      let foundInterval = intervals.some((intervalCount) => {
+      let foundInterval = intervals.some(intervalCount => {
         if (intervalCount.interval === interval) {
           return intervalCount.count += 1;
         }
@@ -179,9 +194,9 @@ function groupByTempo(sampleRate) {
    */
 
   return (intervalCounts) => {
-    let tempoCounts = [];
+    const tempoCounts = [];
 
-    intervalCounts.forEach((intervalCount) => {
+    intervalCounts.forEach(intervalCount => {
       if (intervalCount.interval !== 0) {
         /**
          * Convert an interval to tempo
@@ -206,7 +221,7 @@ function groupByTempo(sampleRate) {
          * See if another interval resolved to the same tempo
          */
 
-        let foundTempo = tempoCounts.some((tempoCount) => {
+        let foundTempo = tempoCounts.some(tempoCount => {
           if (tempoCount.tempo === theoreticalTempo) {
             return tempoCount.count += intervalCount.count;
           }
