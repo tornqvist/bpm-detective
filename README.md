@@ -12,7 +12,7 @@ $ npm install --save bpm-detective
 
 ## Usage
 
-The module exports one function. The function takes an [AudioBuffer](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer) as it's only argument. It returns a promise that resolves to the detected BPM. If the sample was too short or if, for any other reason, the detection failed, the promise will be rejected.
+The module exports one function. The function takes an [AudioBuffer](https://developer.mozilla.org/en-US/docs/Web/API/AudioBuffer) as its only argument. It *returns the detected BPM*. If the sample was too short or if, for any other reason, the detection failed, the method *throws an error*.
 
 ```javascript
 import detect from 'bpm-detective';
@@ -23,18 +23,17 @@ let context = new AudioContext();
 fetch('some/audio/file.wav')
   // Get response as ArrayBuffer
   .then(response => response.arrayBuffer())
-  .then(buffer => {
-    // Decode audio into an AudioBuffer
-    return new Promise((resolve, reject) => {
-      context.decodeAudioData(buffer, resolve, reject);
-    });
-  })
+  // Decode audio into an AudioBuffer
+  .then(data => context.decodeAudioData(data))
   // Run detection
-  .then(detect)
-  // Log error
-  .catch(::console.error)
-  // Log result
-  .then(bpm => console.log(`Detected BPM: ${ bpm }`)):
+  .then(buffer => {
+    try {
+      const bpm = detect(buffer);
+      alert(`Detected BPM: ${ bpm }`);
+    } catch (err) {
+      console.error(err);
+    }
+  );
 ```
 
 ### Disclaimer
