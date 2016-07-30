@@ -17,14 +17,19 @@ The module exports one function. The function takes an [AudioBuffer](https://dev
 ```javascript
 import detect from 'bpm-detective';
 
+const AudioContext = window.AudioContext || window.webkitAudioContext;
 let context = new AudioContext();
 
 // Fetch some audio file
 fetch('some/audio/file.wav')
   // Get response as ArrayBuffer
   .then(response => response.arrayBuffer())
-  // Decode audio into an AudioBuffer
-  .then(data => context.decodeAudioData(data))
+  .then(buffer => {
+    // Decode audio into an AudioBuffer
+    return new Promise((resolve, reject) => {
+      context.decodeAudioData(buffer, resolve, reject);
+    });
+  })
   // Run detection
   .then(buffer => {
     try {
