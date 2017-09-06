@@ -2,7 +2,7 @@
 
 > Detects the BPM of a song or audio sample
 
-This module uses the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to try and detect the BPM of a given sound. You can find more on the implementation and how it works by reading the blog post [Beat Detection Using JavaScript and the Web Audio API](http://web.archive.org/web/20160401073744/http://tech.beatport.com/2014/web-audio/beat-detection-using-web-audio/) which happens to be where I got most of the code.
+This module uses the [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) to try and detect the BPM of a given sound. You can find more on the implementation and how it works by reading the blog post [Beat Detection Using JavaScript and the Web Audio API](http://joesul.li/van/beat-detection-using-web-audio/) which happens to be where I got most of the code.
 
 ## Install
 
