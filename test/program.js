@@ -26,7 +26,7 @@ test('detects bpm', t => {
     try {
       for (let [i, buffer] of buffers.entries()) {
         const bpm = detect(buffer);
-        t.equal(beats[i], bpm, `Detected ${ beats[i] } bpm`);
+        t.equal(beats[i], bpm, `Detected ${beats[i]} bpm`);
       }
     } catch (err) {
       t.fail(err);
@@ -38,7 +38,7 @@ test('fails with short sample', t => {
   convert(fixtures['90']).then(buffer => {
     try {
       const bpm = detect(buffer);
-      t.fail(`Detected ${ bpm }`);
+      t.fail(`Detected ${bpm}`);
     } catch (err) {
       t.pass(err);
     }
