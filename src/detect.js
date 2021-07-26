@@ -3,7 +3,7 @@ const OfflineContext = (window.OfflineAudioContext || window.webkitOfflineAudioC
 /**
  * Detect BPM of a sound source
  * @param  {AudioBuffer} buffer Sound to process
- * @return {Promise}            Resolved to detected BPM
+ * @return {Number}             Detected BPM
  */
 
 export default function detect(buffer) {
